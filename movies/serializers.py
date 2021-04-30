@@ -10,11 +10,11 @@ class MovieListSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     
-    #review_count = serializers
+    # review_count = serializers.IntegerField(source)
 
     class Meta:
         model = Movie
-        fields = ('title', 'overview', 'release_date', 'poster_path', ) #'review_count', )
+        fields = ('title', 'overview', 'release_date', 'poster_path',) #'review_count',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -25,4 +25,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         read_only_fields = ('movie',)
 
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('content', 'review',)
+
+        read_only_fields = ('review',)
 

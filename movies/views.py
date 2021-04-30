@@ -2,7 +2,7 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer
+from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer, CommentSerializer
 from .models import Movie, Review, Comment
 
 # Create your views here.
@@ -54,6 +54,24 @@ def review_detail(request, review_pk):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+
+
+@api_view(['POST'])
+def create_comment(request, review_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    serializer = CommentSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(review=review)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def comment_detail(request, review_pk, comment_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    serializer = CommentSerializer(comment) #조회라서 그냥 위에서 불러오면 된다.
+    return Response(serializer.data)
+
 
     
 
