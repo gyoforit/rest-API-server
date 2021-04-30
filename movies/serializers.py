@@ -3,27 +3,18 @@ from rest_framework import serializers
 
 class MovieListSerializer(serializers.ModelSerializer):
     
+    review_count = serializers.IntegerField(source='reviews.count', read_only=True)
+
     class Meta:
         model = Movie
-        fields = ('title', 'release_date',)
+        fields = ('title', 'release_date', 'review_count',)
 
 
 class MovieSerializer(serializers.ModelSerializer):
-    
-    # review_count = serializers.IntegerField(source)
 
     class Meta:
         model = Movie
-        fields = ('title', 'overview', 'release_date', 'poster_path',) #'review_count',)
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Review
-        fields = ('title', 'content', 'rank', 'movie',)
-
-        read_only_fields = ('movie',)
+        fields = ('title', 'overview', 'release_date', 'poster_path',)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -33,4 +24,18 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('content', 'review',)
 
         read_only_fields = ('review',)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    
+    movie = MovieListSerializer(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('title', 'content', 'rank', 'movie', 'comments',)
+
+        read_only_fields = ('movie',)
+
+
 
